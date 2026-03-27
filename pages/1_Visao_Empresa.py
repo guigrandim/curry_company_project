@@ -168,7 +168,7 @@ df_fd = clean_code(df_fd)
 
 #1. Create a Header and Sidebar (Filters)
 
-st.header ('Marketplace - Visão do Cliente')
+st.header ('Marketplace - Visão da Empresa')
 
 diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 caminho_logo = os.path.join(diretorio_atual,'..','assets', 'logo.png')
