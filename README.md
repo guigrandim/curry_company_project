@@ -6,24 +6,24 @@ https://currycompanyproject-ggsolutions.streamlit.app
 <img src="./assets/image_8.png" alt="Dashboard Estratégico da Curry Company" width="800px">
 </p>
 
-📊 Visão Geral do Projeto
-Esse projeto foi desenvolvido como parte dos estudos da Comunidade DS - FTC: Analisando Dados com Python. Esse é um prototipo desenvolvido
+## 📊 Visão Geral do Projeto
+
+Esse projeto foi desenvolvido como parte dos estudos da Comunidade DS - FTC: Analisando Dados com Python, sendo um prototipo desenvolvido
 em aula em conjunto com o professor Meigarom Lopes. O principal desenvolvimento foi uma solução de inteligência de dados centralizada: um Dashboard de Visão Estratégica interativo utilizando Python e Streamlit. Esta ferramenta transforma dados brutos em insights acionáveis, permitindo o acompanhamento de KPIs cruciais através de três perspectivas principais: Empresa, Entregadores e Restaurantes.
 
-______________________________________________________________________________________________________________________________________________
-
-🛠️ Stack Técnica
+## 🛠️ Stack Técnica
 As seguintes ferramentas e bibliotecas foram utilizadas no desenvolvimento deste projeto:
 - Linguagem: Python 3.8+
 - Framework Web: Streamlit
 - Manipulação de Dados: Pandas, NumPy
 - Visualização de Dados: Plotly, Matplotlib
 - Gerenciamento de Ambiente: pip
-____________________________________________________________________________________________________________________________________________
 
-📂 Arquitetura do Projeto
-A estrutura do repositório está organizada da seguinte forma:
 
+## 📂 Arquitetura do Projeto
+### A estrutura do repositório está organizada da seguinte forma:
+
+```text
 curry_company_project/
 ├── assets/             # Imagens e recursos visuais utilizados no README e no dashboard.
 ├── codigos_v1          # Algoritimos originais desenvolvidos nas aulas
@@ -34,11 +34,10 @@ curry_company_project/
 ├── LICENSE             # Licença MIT do projeto.
 ├── README.md           # Documentação principal do projeto.
 └── requirements.txt    # Lista de bibliotecas Python necessárias.
+```
 
-______________________________________________________________________________________________________________________________________________
-
-📈 Funcionalidades e Visualizações
-O dashboard está dividido em três visões estratégicas, acessíveis pelo menu lateral e todos os gráficos são interativos podendo ser filtrados por intervalo de datas e pelo tipo de trafego no menu lateral:
+## 📈 Funcionalidades e Visualizações
+#### O dashboard está dividido em três visões estratégicas, acessíveis pelo menu lateral e todos os gráficos são interativos podendo ser filtrados por intervalo de datas e pelo tipo de trafego no menu lateral:
 
 1. Visão Empresa (Página Inicial)
 - Focada em métricas gerenciais e comportamento.
@@ -55,8 +54,6 @@ O dashboard está dividido em três visões estratégicas, acessíveis pelo menu
 - Métricas Chave: Total de restaurantes parceiros, distância média de entrega, previsibilidade da operação com e sem festival
 - Gráficos: Distancia média por cidade, distribuição de tempo por cidade e tempo médio por entrega e media de entrega por cidade e trafego
 
-_______________________________________________________________________________________________________________________________________________
-
-👩‍💻 Autor
-Desenvolvido por Guilherme Grandim conjunto da Comunidade DS. Fica meu agradecimento ao professor Meigarom Lopes pel conhececimento transmitido
-Sinta-se à vontade para entrar em contato ou contribuir com o projeto!
+## 👩‍💻 Autor
+ Desenvolvido por Guilherme Grandim durante as aulas da Comunidade DS como estudo para programação em Python e Streamlit. Fica meu agradecimento ao professor Meigarom Lopes pelo conhececimento transmitido.</br>
+ Sinta-se à vontade para entrar em contato ou contribuir com o projeto!
