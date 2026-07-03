@@ -2,11 +2,20 @@
 
 Dashboard interativo em Streamlit para acompanhar a operação de entregas da Curry Company sob três óticas — Empresa, Entregadores e Restaurantes — com um notebook complementar de EDA e um modelo preditivo simples do tempo de entrega.
 
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.39-FF4B4B)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 <p align="center">
 <img src="./docs/images/image_8.png" alt="Dashboard Estratégico da Curry Company" width="800px">
 </p>
 
 **App em produção:** https://currycompanyproject-ggsolutions.streamlit.app
+
+### 🎯 Destaques
+- Dashboard com 3 visões de negócio (Empresa, Entregadores, Restaurantes), rodando sobre 41.419 pedidos limpos de um dataset com 45.593 linhas brutas.
+- Descoberta de qualidade de dados: quase 5 mil valores ausentes estavam mascarados como a string `"NaN"`, invisíveis para `df.isna()` — tratados explicitamente em `clean_code()` e cobertos por testes automatizados (pytest).
+- Modelo exploratório (Random Forest) prevendo `Time_taken(min)` com R² de 0,652, usado para validar que variáveis operacionais (tráfego, clima, distância, entregas simultâneas) carregam sinal preditivo real.
 
 ---
 
@@ -92,6 +101,22 @@ curry_company_project/
 └── requirements-dev.txt   # Bibliotecas extras para rodar o notebook e os testes (scikit-learn, pytest, etc.).
 ```
 
+### Como Executar Localmente
+
+```bash
+git clone https://github.com/guigrandim/curry_company_project.git
+cd curry_company_project
+pip install -r requirements.txt
+streamlit run Home.py
+```
+
+Para rodar o notebook e os testes automatizados, instale também as dependências de desenvolvimento:
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
 ---
 
 ## 💡 Top Insights
@@ -164,3 +189,15 @@ O dashboard entrega, em tempo real e sem depender de relatórios manuais, uma vi
 **Limitações:** O dataset cobre um período de menos de 2 meses (fev–abr/2022) em cidades específicas da Índia; sazonalidades de médio/longo prazo e expansão para novas cidades não estão refletidas nas análises.
 
 ---
+
+*Fonte de dados: dataset público de food delivery na Índia (classroom "FTC: Analisando Dados com Python") · Metodologia: CRISP-DS · Stack: Python, pandas, streamlit, plotly, scikit-learn*
+
+## 👩‍💻 Autor
+
+Desenvolvido por Guilherme Grandim como um projeto de portfólio em análise de dados.
+LinkedIn: [linkedin.com/in/guilherme-grandim](https://www.linkedin.com/in/guilherme-grandim)
+Gmail: gui.grandim@gmail.com
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT — veja [LICENSE](./LICENSE) para detalhes.
