@@ -3,7 +3,7 @@
 https://currycompanyproject-ggsolutions.streamlit.app
 
 <p align="center">
-<img src="./assets/image_8.png" alt="Dashboard Estratégico da Curry Company" width="800px">
+<img src="./docs/images/image_8.png" alt="Dashboard Estratégico da Curry Company" width="800px">
 </p>
 
 ## 📊 Visão Geral do Projeto
@@ -25,10 +25,15 @@ As seguintes ferramentas e bibliotecas foram utilizadas no desenvolvimento deste
 
 ```text
 curry_company_project/
-├── assets/             # Imagens e recursos visuais utilizados no README e no dashboard.
-├── codigos_v1          # Algoritimos originais desenvolvidos nas aulas
-├── dataset/            # O arquivo CSV com os dados operacionais (brutos/limpos).
+├── archive/
+│   └── legacy_aula/    # Algoritimos originais desenvolvidos nas aulas (não usados pelo app, mantidos como histórico).
+├── assets/             # Imagens usadas pelo próprio dashboard (logos da sidebar).
+├── data/               # O arquivo CSV com os dados operacionais (brutos/limpos).
+├── docs/
+│   └── images/         # Imagens usadas apenas na documentação (README).
 ├── pages/              # Páginas secundárias do dashboard Streamlit (Visão Entregadores, Visão Restaurantes).
+├── src/
+│   └── utils.py        # Limpeza de dados, carregamento (com cache) e sidebar, compartilhados pelas páginas.
 ├── .gitignore          # Arquivos e pastas a serem ignorados pelo Git.
 ├── Home.py             # Arquivo principal que renderiza a página inicial do dashboard (Visão Empresa).
 ├── LICENSE             # Licença MIT do projeto.
@@ -41,18 +46,26 @@ curry_company_project/
 
 1. Visão Empresa (Página Inicial)
 - Focada em métricas gerenciais e comportamento.
-- Métricas Chave (KPIs): Total de Pedidos, Total de Entregadores, Receita (simulada), Satisfação Média (NPS).
+- Métricas Chave (KPIs): Total de Pedidos, Total de Entregadores, Avaliação Média dos Entregadores, % de Pedidos dentro do SLA (meta de 30 min).
 - Gráficos: Volume de pedidos por dia e por semana, distribuição de pedidos por tipo de tráfego e por tipo de cidade
 
 2. Visão Entregadores
 - Focada na eficiência operacional da frota.
-- Métricas Chave: Média de idade dos entregadores, avaliação média, tempo médio de entrega e qualidade da frota
-- Gráficos: Tabelas de avaliações dos entregadores, avaliação média por trafego e por clima, entregadores mais rápidos e mais lentos
+- Métricas Chave: Idade mínima/máxima dos entregadores, qualidade da frota (faixas documentadas na própria página)
+- Gráficos: Avaliação média por tráfego e por clima; tabelas de avaliação por entregador e de entregadores mais rápidos/lentos por cidade
 
 3. Visão Restaurantes
 - Focada na performance dos parceiros e logística de retirada.
-- Métricas Chave: Total de restaurantes parceiros, distância média de entrega, previsibilidade da operação com e sem festival
+- Métricas Chave: Total de entregadores únicos, distância média de entrega, tempo médio e desvio-padrão de entrega (filtráveis por Festival: Todos/Sim/Não)
 - Gráficos: Distancia média por cidade, distribuição de tempo por cidade e tempo médio por entrega e media de entrega por cidade e trafego
+
+## 🔍 Qualidade e Tratamento de Dados
+
+O dataset de origem contém armadilhas que não aparecem em uma inspeção superficial e que foram identificadas e tratadas na limpeza (`clean_code()`):
+
+- **Valores ausentes mascarados**: colunas numéricas/categóricas trazem a string literal `"NaN"` em vez de um nulo real, então `df.isna().sum()` reporta zero ausências em qualquer coluna. Contagem real de ausências: `Delivery_person_Age` (1.854), `Delivery_person_Ratings` (1.908), `Road_traffic_density` (601), `multiple_deliveries` (993), `Festival` (228), `City` (1.200).
+- **Prefixo redundante**: a coluna `Weatherconditions` mantém o texto `"conditions "` colado em cada valor (ex.: `"conditions Sunny"`).
+- **Erro de digitação na fonte**: a coluna `City` traz o valor `"Metropolitian"` (typo original do dataset, não uma inconsistência introduzida no tratamento).
 
 ## 👩‍💻 Autor
  Desenvolvido por Guilherme Grandim durante as aulas da Comunidade DS como estudo para programação em Python e Streamlit. Fica meu agradecimento ao professor Meigarom Lopes pelo conhececimento transmitido.</br>
