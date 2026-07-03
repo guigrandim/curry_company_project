@@ -17,6 +17,12 @@ LOGO_GG_PATH = os.path.join(REPO_ROOT, 'assets', 'logo_gg.png')
 TRAFFIC_OPTIONS = ['Low', 'Medium', 'High', 'Jam']
 
 
+def format_number_ptbr(numero, casas_decimais=0):
+    """Formata um número no padrão pt-BR (ponto de milhar, vírgula decimal)."""
+    texto = f"{numero:,.{casas_decimais}f}"
+    return texto.replace(',', '_').replace('.', ',').replace('_', '.')
+
+
 def clean_code(df_fd):
     """ Essa função tem a responsabilidade de limpar o dataframe
 
@@ -119,3 +125,11 @@ def build_sidebar(df_fd):
     df_fd = df_fd.loc[df_fd['Road_traffic_density'].isin(traffic_options), :]
 
     return df_fd
+
+
+def guard_empty_dataframe(df_fd):
+    """Interrompe a renderização da página com um aviso amigável caso os filtros
+    selecionados na sidebar não retornem nenhum pedido."""
+    if df_fd.empty:
+        st.warning('⚠️ Nenhum pedido encontrado para os filtros selecionados. Ajuste a data ou o tráfego na barra lateral.')
+        st.stop()

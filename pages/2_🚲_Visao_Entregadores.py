@@ -5,7 +5,7 @@
 import plotly.express as px
 import streamlit as st
 
-from src.utils import load_data, build_sidebar
+from src.utils import load_data, build_sidebar, guard_empty_dataframe, format_number_ptbr
 
 #===========================================
 # Configuration Page
@@ -16,7 +16,7 @@ st.set_page_config(page_title='Visão Entregadores', page_icon='🚲', layout="w
 #===========================================
 # Visual settings
 #===========================================
-TEMPLATE = 'plotly_white'
+TEMPLATE = 'plotly_dark'
 TRAFFIC_COLORS = {'Low': '#00CC96', 'Medium': '#FFA15A', 'High': '#EF553B', 'Jam': '#AB63FA'}
 
 #===========================================
@@ -133,6 +133,7 @@ df_fd = load_data()
 st.header ('Marketplace - Visão do entregador')
 
 df_fd = build_sidebar(df_fd)
+guard_empty_dataframe(df_fd)
 
 #===========================================
 # STEP 3: Create a Body - Streamlit
@@ -144,12 +145,14 @@ col1, col2, col3 = st.columns(3)
 with col1:
     with st.container(border=True):
         maior_idade = df_fd.loc[:, 'Delivery_person_Age'].max()
-        col1.metric('👴 Idade Entregador Mais Velho', maior_idade)
+        col1.metric('👴 Idade Entregador Mais Velho', maior_idade,
+                    help='Maior valor de Delivery_person_Age nos pedidos filtrados.')
 
 with col2:
     with st.container(border=True):
         menor_idade = df_fd.loc[:, 'Delivery_person_Age'].min()
-        col2.metric('👶 Idade Entregador Mais Novo', menor_idade)
+        col2.metric('👶 Idade Entregador Mais Novo', menor_idade,
+                    help='Menor valor de Delivery_person_Age nos pedidos filtrados.')
 
 with col3:
     with st.container(border=True):

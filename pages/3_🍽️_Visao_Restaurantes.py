@@ -8,7 +8,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from src.utils import load_data, build_sidebar
+from src.utils import load_data, build_sidebar, guard_empty_dataframe, format_number_ptbr
 
 #===========================================
 # Configuration Page
@@ -19,7 +19,7 @@ st.set_page_config(page_title='Visão Restaurantes', page_icon='🍽️', layout
 #===========================================
 # Visual settings
 #===========================================
-TEMPLATE = 'plotly_white'
+TEMPLATE = 'plotly_dark'
 CITY_COLORS = {'Urban': '#EF553B', 'Metropolitian': '#636EFA', 'Semi-Urban': '#00CC96'}
 
 #===========================================
@@ -148,6 +148,7 @@ df_fd = load_data()
 st.header ('Marketplace - Visão do Restaurante')
 
 df_fd = build_sidebar(df_fd)
+guard_empty_dataframe(df_fd)
 
 #===========================================
 # STEP 3: Create a Body - Streamlit
@@ -163,26 +164,30 @@ with col1:
     with st.container(border=True):
         #Filter By Unique Delivery
         entregadores_unicos = len(df_fd.loc[:,'Delivery_person_ID'].unique())
-        col1.metric('🚴 Entregadores na Base', entregadores_unicos)
+        col1.metric('🚴 Entregadores na Base', format_number_ptbr(entregadores_unicos),
+                    help='Entregadores únicos (Delivery_person_ID) nos pedidos filtrados.')
 
 with col2:
     with st.container(border=True):
         distancia_media_geral = df_fd['distancia_km'].mean().round(0)
-        col2.metric('📏 Distância Média [Km]', distancia_media_geral)
+        col2.metric('📏 Distância Média [Km]', format_number_ptbr(distancia_media_geral),
+                    help='Distância média (Haversine) entre restaurante e destino nos pedidos filtrados.')
 
 with col3:
     with st.container(border=True):
         tempo_medio, dp_tempo, estabilidade = festival_stats(df_fd, festival_selecionado)
         col3.metric(label = f'⏱️ Tempo Médio de Entrega [min]\n\nFestival: {festival_selecionado}',
-                    value = tempo_medio,
+                    value = format_number_ptbr(tempo_medio, 2),
                     delta = estabilidade,
                     delta_color = "off",
-                    delta_arrow="off")
+                    delta_arrow="off",
+                    help='Média de Time_taken(min); o rótulo indica a estabilidade (coeficiente de variação) do tempo de entrega.')
 
 with col4:
     with st.container(border=True):
         col4.metric(label = f'📊 DP Tempo de Entrega [min]\n\nFestival: {festival_selecionado}',
-                    value = dp_tempo)
+                    value = format_number_ptbr(dp_tempo, 2),
+                    help='Desvio padrão de Time_taken(min) — quanto maior, menos previsível é a entrega.')
 
 st.markdown("""___""")
 

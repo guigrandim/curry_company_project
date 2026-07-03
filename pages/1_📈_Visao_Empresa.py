@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from src.utils import load_data, build_sidebar
+from src.utils import load_data, build_sidebar, guard_empty_dataframe, format_number_ptbr
 
 #===========================================
 # Configuration Page
@@ -17,7 +17,7 @@ st.set_page_config(page_title='Visão Empresa', page_icon='📈', layout="wide")
 #===========================================
 # Visual settings
 #===========================================
-TEMPLATE = 'plotly_white'
+TEMPLATE = 'plotly_dark'
 CITY_COLORS = {'Urban': '#EF553B', 'Metropolitian': '#636EFA', 'Semi-Urban': '#00CC96'}
 TRAFFIC_COLORS = {'Low': '#00CC96', 'Medium': '#FFA15A', 'High': '#EF553B', 'Jam': '#AB63FA'}
 
@@ -139,6 +139,7 @@ df_fd = load_data()
 st.header ('Marketplace - Visão da Empresa')
 
 df_fd = build_sidebar(df_fd)
+guard_empty_dataframe(df_fd)
 
 #===========================================
 # STEP 3: Create a Body - Streamlit
@@ -151,23 +152,27 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     with st.container(border=True):
         total_pedidos = len(df_fd)
-        col1.metric('📦 Total de Pedidos', total_pedidos)
+        col1.metric('📦 Total de Pedidos', format_number_ptbr(total_pedidos),
+                    help='Quantidade de pedidos após limpeza dos dados, dentro do período e tráfego selecionados.')
 
 with col2:
     with st.container(border=True):
         total_entregadores = df_fd['Delivery_person_ID'].nunique()
-        col2.metric('🚴 Total de Entregadores', total_entregadores)
+        col2.metric('🚴 Total de Entregadores', format_number_ptbr(total_entregadores),
+                    help='Número de entregadores únicos (Delivery_person_ID) nos pedidos filtrados.')
 
 with col3:
     with st.container(border=True):
         avaliacao_media_entregadores = df_fd['Delivery_person_Ratings'].mean().round(2)
-        col3.metric('⭐ Avaliação Média dos Entregadores', avaliacao_media_entregadores)
+        col3.metric('⭐ Avaliação Média dos Entregadores', format_number_ptbr(avaliacao_media_entregadores, 2),
+                    help='Média simples de Delivery_person_Ratings nos pedidos filtrados.')
 
 with col4:
     with st.container(border=True):
         meta_sla_min = 30
         pct_dentro_sla = (df_fd['Time_taken(min)'] <= meta_sla_min).mean() * 100
-        col4.metric(f'✅ Pedidos dentro do SLA (≤{meta_sla_min} min)', f'{pct_dentro_sla:.1f}%')
+        col4.metric(f'✅ Pedidos dentro do SLA (≤{meta_sla_min} min)', f'{format_number_ptbr(pct_dentro_sla, 1)}%',
+                    help=f'Percentual de pedidos entregues em até {meta_sla_min} minutos (meta fixa de negócio).')
 
 st.markdown("""___""")
 
