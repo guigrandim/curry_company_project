@@ -17,6 +17,12 @@ from src.utils import load_data, build_sidebar
 st.set_page_config(page_title='Visão Restaurantes', page_icon='🍽️', layout="wide")
 
 #===========================================
+# Visual settings
+#===========================================
+TEMPLATE = 'plotly_white'
+CITY_COLORS = {'Urban': '#EF553B', 'Metropolitian': '#636EFA', 'Semi-Urban': '#00CC96'}
+
+#===========================================
 # Functions
 #===========================================
 def traffic_city_mean (df_fd):
@@ -34,7 +40,8 @@ def traffic_city_mean (df_fd):
 
     fig = px.sunburst(tempo_medio_cidade_trafego, path =['cidade', 'Trafego'], values='tempo_medio',
                       color = 'dp_tempo', color_continuous_scale='RdBu',
-                      color_continuous_midpoint=np.average(tempo_medio_cidade_trafego['dp_tempo']))
+                      color_continuous_midpoint=np.average(tempo_medio_cidade_trafego['dp_tempo']),
+                      title='Tempo Médio de Entrega por Cidade e Tráfego', template=TEMPLATE)
 
     return fig, tempo_medio_cidade_trafego
 
@@ -73,9 +80,16 @@ def delivery_mean_city (df_fd):
 
     tempo_medio_entrega_cidade['coef_variacao'] = ((tempo_medio_entrega_cidade['dp_entregas'] / tempo_medio_entrega_cidade['tempo_medio_entregas']) * 100).round(2)
 
+    cores = [CITY_COLORS.get(cidade, '#636EFA') for cidade in tempo_medio_entrega_cidade['cidade']]
+
     fig = go.Figure()
-    fig.add_trace(go.Bar(name='Control', x=tempo_medio_entrega_cidade['cidade'], y=tempo_medio_entrega_cidade['tempo_medio_entregas'],
+    fig.add_trace(go.Bar(name='Tempo Médio', x=tempo_medio_entrega_cidade['cidade'], y=tempo_medio_entrega_cidade['tempo_medio_entregas'],
+                         marker_color=cores,
                          error_y=dict(type='data', array=tempo_medio_entrega_cidade['dp_entregas'])))
+    fig.update_layout(
+        title='Tempo Médio de Entrega por Cidade', template=TEMPLATE,
+        yaxis_title='Tempo Médio (min)', xaxis_title='Cidade', showlegend=False
+    )
     return fig
 
 
@@ -92,10 +106,15 @@ def restaurante_distance (df_fd):
         .round(2)
     )
 
+    cores = [CITY_COLORS.get(cidade, '#636EFA') for cidade in distancia_restaurante_cidade['City']]
+
     fig = go.Figure(data=[go.Pie(labels=distancia_restaurante_cidade['City'],
                                      values=distancia_restaurante_cidade['distancia_media'],
                                      textinfo='label+percent',
-                                     insidetextorientation='radial')])
+                                     insidetextorientation='radial',
+                                     hole=0.45,
+                                     marker=dict(colors=cores))])
+    fig.update_layout(title='Distância Média por Cidade', template=TEMPLATE)
 
     return fig, distancia_restaurante_cidade
 
@@ -141,37 +160,39 @@ festival_selecionado = st.radio('Festival', ['Todos', 'Sim', 'Não'], horizontal
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    #Filter By Unique Delivery
-    entregadores_unicos = len(df_fd.loc[:,'Delivery_person_ID'].unique())
-    col1.metric('Entregadores BD', entregadores_unicos)
+    with st.container(border=True):
+        #Filter By Unique Delivery
+        entregadores_unicos = len(df_fd.loc[:,'Delivery_person_ID'].unique())
+        col1.metric('🚴 Entregadores na Base', entregadores_unicos)
 
 with col2:
-    distancia_media_geral = df_fd['distancia_km'].mean().round(0)
-    col2.metric('Distancia Med [Km]', distancia_media_geral)
+    with st.container(border=True):
+        distancia_media_geral = df_fd['distancia_km'].mean().round(0)
+        col2.metric('📏 Distância Média [Km]', distancia_media_geral)
 
 with col3:
-    tempo_medio, dp_tempo, estabilidade = festival_stats(df_fd, festival_selecionado)
-    col3.metric(label = f'Tempo Médio de Entrega [min]\n\nFestival: {festival_selecionado}',
-                value = tempo_medio,
-                delta = estabilidade,
-                delta_color = "off",
-                delta_arrow="off")
+    with st.container(border=True):
+        tempo_medio, dp_tempo, estabilidade = festival_stats(df_fd, festival_selecionado)
+        col3.metric(label = f'⏱️ Tempo Médio de Entrega [min]\n\nFestival: {festival_selecionado}',
+                    value = tempo_medio,
+                    delta = estabilidade,
+                    delta_color = "off",
+                    delta_arrow="off")
 
 with col4:
-    col4.metric(label = f'DP Tempo de Entrega [min]\n\nFestival: {festival_selecionado}',
-                value = dp_tempo)
+    with st.container(border=True):
+        col4.metric(label = f'📊 DP Tempo de Entrega [min]\n\nFestival: {festival_selecionado}',
+                    value = dp_tempo)
 
 st.markdown("""___""")
 
 #Pie Chart - Order by Time Delivry by City
 
-container1 = st.container(border = True)
-
-with container1:
+with st.container(border=True):
     fig, distancia_restaurante_cidade = restaurante_distance (df_fd)
-    st.markdown("Distancia Média por cidade")
-    st.plotly_chart(fig)
-    st.dataframe(distancia_restaurante_cidade)
+    st.plotly_chart(fig, use_container_width=True)
+    with st.expander("Ver dados detalhados"):
+        st.dataframe(distancia_restaurante_cidade, use_container_width=True)
 
 st.markdown("""___""")
 
@@ -180,19 +201,18 @@ st.markdown("""___""")
 col1, col2 = st.columns([1,2])
 
 with col1:
-    fig = delivery_mean_city (df_fd)
-    st.markdown("Distribuição de Tempo por Cidade")
-    st.plotly_chart(fig)
+    with st.container(border=True):
+        fig = delivery_mean_city (df_fd)
+        st.plotly_chart(fig, use_container_width=True)
 
 with col2:
-    tempo_medio_cidade_tipo = time_city_order (df_fd)
-    st.markdown("Tempo Médio por tipo de Entrega")
-    st.dataframe(tempo_medio_cidade_tipo)
+    with st.container(border=True):
+        tempo_medio_cidade_tipo = time_city_order (df_fd)
+        st.markdown("##### Tempo Médio por Tipo de Entrega")
+        st.dataframe(tempo_medio_cidade_tipo, use_container_width=True)
 
-container1 = st.container(border = True)
-
-with container1:
+with st.container(border=True):
     fig, tempo_medio_cidade_trafego = traffic_city_mean (df_fd)
-    st.markdown("Media de Tempo de Entrega por Cidade e Trafego")
-    st.plotly_chart(fig)
-    st.dataframe(tempo_medio_cidade_trafego)
+    st.plotly_chart(fig, use_container_width=True)
+    with st.expander("Ver dados detalhados"):
+        st.dataframe(tempo_medio_cidade_trafego, use_container_width=True)

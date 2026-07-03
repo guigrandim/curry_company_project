@@ -48,8 +48,9 @@ def clean_code(df_fd):
     df_fd['Week_of_Year'] = df_fd['Order_Date'].dt.strftime("%U").astype('Int64')
 
     ## 3 - Remove NaN
-    for coluna in ['Delivery_person_Age', 'Road_traffic_density', 'City', 'Festival', 'Vehicle_condition']:
+    for coluna in ['Delivery_person_Age', 'Road_traffic_density', 'City', 'Festival', 'Vehicle_condition', 'multiple_deliveries']:
         df_fd = df_fd.loc[df_fd[coluna] != 'NaN', :].copy()
+    df_fd['multiple_deliveries'] = pd.to_numeric(df_fd['multiple_deliveries']).astype('Int64')
 
     #4. Create a columns distancia_km
     # 4.1 -  Conversion of degrees to radians
@@ -85,8 +86,8 @@ def build_sidebar(df_fd):
     image1 = Image.open(LOGO_PATH)
     st.sidebar.image(image1, width=240)
 
-    data_minima = df_fd['Order_Date'].min()
-    data_maxima = df_fd['Order_Date'].max()
+    data_minima = df_fd['Order_Date'].min().date()
+    data_maxima = df_fd['Order_Date'].max().date()
 
     st.sidebar.title('Curry Company')
     st.sidebar.markdown('Fast Delivery in Town')
@@ -114,7 +115,7 @@ def build_sidebar(df_fd):
     image2 = Image.open(LOGO_GG_PATH)
     st.sidebar.image(image2, width=120)
 
-    df_fd = df_fd.loc[df_fd['Order_Date'] <= date_slider, :]
+    df_fd = df_fd.loc[df_fd['Order_Date'] <= pd.Timestamp(date_slider), :]
     df_fd = df_fd.loc[df_fd['Road_traffic_density'].isin(traffic_options), :]
 
     return df_fd

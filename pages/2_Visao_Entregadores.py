@@ -14,6 +14,12 @@ from src.utils import load_data, build_sidebar
 st.set_page_config(page_title='Visão Entregadores', page_icon='🚲', layout="wide")
 
 #===========================================
+# Visual settings
+#===========================================
+TEMPLATE = 'plotly_white'
+TRAFFIC_COLORS = {'Low': '#00CC96', 'Medium': '#FFA15A', 'High': '#EF553B', 'Jam': '#AB63FA'}
+
+#===========================================
 # Functions
 #===========================================
 def speed_delivery (df_fd, condicao):
@@ -136,17 +142,20 @@ df_fd = build_sidebar(df_fd)
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    maior_idade = df_fd.loc[:, 'Delivery_person_Age'].max()
-    col1.metric('Idade Entregador Mais Velho', maior_idade)
+    with st.container(border=True):
+        maior_idade = df_fd.loc[:, 'Delivery_person_Age'].max()
+        col1.metric('👴 Idade Entregador Mais Velho', maior_idade)
 
 with col2:
-    menor_idade = df_fd.loc[:, 'Delivery_person_Age'].min()
-    col2.metric('Idade Entregador Mais Novo', menor_idade)
+    with st.container(border=True):
+        menor_idade = df_fd.loc[:, 'Delivery_person_Age'].min()
+        col2.metric('👶 Idade Entregador Mais Novo', menor_idade)
 
 with col3:
-    media_qualidade_frota, qualidade_frota = quality_fleet_delivery(df_fd)
-    col3.metric('Qualidade da Frota', qualidade_frota, media_qualidade_frota, delta_color = "off")
-    col3.caption('Faixas (média de Vehicle_condition, escala 0-3): 🟢 >3 Excelente · 🟡 >2 Bom · 🟠 >1 Médio · 🔴 ≤1 Ruim')
+    with st.container(border=True):
+        media_qualidade_frota, qualidade_frota = quality_fleet_delivery(df_fd)
+        col3.metric('🛵 Qualidade da Frota', qualidade_frota, media_qualidade_frota, delta_color = "off")
+        col3.caption('Faixas (média de Vehicle_condition, escala 0-3): 🟢 >3 Excelente · 🟡 >2 Bom · 🟠 >1 Médio · 🔴 ≤1 Ruim')
 
 st.markdown("""___""")
 
@@ -155,21 +164,32 @@ st.markdown("""___""")
 col5, col6 = st.columns([1,1])
 
 with col5:
-    avaliacao_media_por_entregador = delivery_id_rating (df_fd)
-    st.markdown("Avaliação por entregador")
-    st.dataframe(avaliacao_media_por_entregador, width=500, height=460)
+    with st.container(border=True):
+        avaliacao_media_por_entregador = delivery_id_rating (df_fd)
+        st.markdown("##### ⭐ Avaliação por Entregador")
+        st.dataframe(avaliacao_media_por_entregador, width=500, height=460, use_container_width=True)
 
 with col6:
-    avaliacao_media_por_trafego = delivery_traffic_rating (df_fd)
-    st.markdown("Avaliação Média por Trafego")
-    fig = px.bar(avaliacao_media_por_trafego, x='Trafego', y='media_avaliacao_entrega',
-                 error_y='dp_avaliacao_entrega', labels={'media_avaliacao_entrega': 'Avaliação Média'})
-    st.plotly_chart(fig, use_container_width=True)
+    with st.container(border=True):
+        avaliacao_media_por_trafego = delivery_traffic_rating (df_fd)
+        fig = px.bar(
+            avaliacao_media_por_trafego, x='Trafego', y='media_avaliacao_entrega',
+            error_y='dp_avaliacao_entrega', color='Trafego', color_discrete_map=TRAFFIC_COLORS,
+            title='Avaliação Média por Tráfego', labels={'media_avaliacao_entrega': 'Avaliação Média'},
+            template=TEMPLATE
+        )
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
 
-    avaliacao_media_por_clima = delivery_weather_rating (df_fd)
-    st.markdown("Avaliação por Clima")
-    fig = px.bar(avaliacao_media_por_clima, x='Clima', y='Media_Avaliação', error_y='DP_Avaliação')
-    st.plotly_chart(fig, use_container_width=True)
+    with st.container(border=True):
+        avaliacao_media_por_clima = delivery_weather_rating (df_fd)
+        fig = px.bar(
+            avaliacao_media_por_clima, x='Clima', y='Media_Avaliação', error_y='DP_Avaliação',
+            color='Media_Avaliação', color_continuous_scale='Blues',
+            title='Avaliação Média por Clima', template=TEMPLATE
+        )
+        fig.update_layout(coloraxis_showscale=False)
+        st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("""___""")
 
@@ -178,11 +198,13 @@ st.markdown("""___""")
 col7, col8 = st.columns(2)
 
 with col7:
-    entregadores_mais_rapidos_cidade = speed_delivery (df_fd, 'mais rapido')
-    st.markdown("Entregadores Mais Rapidos")
-    st.dataframe(entregadores_mais_rapidos_cidade, use_container_width = True)
+    with st.container(border=True):
+        entregadores_mais_rapidos_cidade = speed_delivery (df_fd, 'mais rapido')
+        st.markdown("##### 🚀 Entregadores Mais Rápidos por Cidade")
+        st.dataframe(entregadores_mais_rapidos_cidade, use_container_width = True)
 
 with col8:
-    entregadores_mais_lentos_cidade = speed_delivery (df_fd, 'mais lento')
-    st.markdown("Entregadores Mais Lentos")
-    st.dataframe(entregadores_mais_lentos_cidade, use_container_width = True)
+    with st.container(border=True):
+        entregadores_mais_lentos_cidade = speed_delivery (df_fd, 'mais lento')
+        st.markdown("##### 🐢 Entregadores Mais Lentos por Cidade")
+        st.dataframe(entregadores_mais_lentos_cidade, use_container_width = True)
